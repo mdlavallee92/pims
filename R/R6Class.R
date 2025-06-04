@@ -1,4 +1,4 @@
-# Pims analysis class
+# Pims analysis class ----------------
 PimsAnalysis <- R6::R6Class(
   classname = "PimsAnalysis",
   public = list(
@@ -7,11 +7,11 @@ PimsAnalysis <- R6::R6Class(
       analysisCohorts,
       periodOfInterest,
       lookbackOptions,
-      prevalence,
-      incidence,
-      mortality,
-      strata,
-      populationStandarization
+      prevalence = NULL,
+      incidence = NULL,
+      mortality = NULL,
+      strata = NULL,
+      populationStandarization = NULL
     ) {
 
       # set analysis Cohort
@@ -60,7 +60,7 @@ PimsAnalysis <- R6::R6Class(
   )
 )
 
-
+# Cohort Info -------------------
 CohortInfo <- R6::R6Class(
   classname = "CohortInfo",
   public = list(
@@ -94,6 +94,7 @@ CohortInfo <- R6::R6Class(
    )
 )
 
+# LookBackOption -------------------------
 # R6 Class for lookback option
 LookBackOption <- R6::R6Class(
   classname = "LookBackOption",
@@ -162,3 +163,39 @@ LookBackOption <- R6::R6Class(
 
   )
 )
+
+# Prevalence ---------------------
+PrevalenceOptions <- R6::R6Class(
+  classname = "PrevalenceOptions",
+  public = list(
+
+    initialize = function(
+      prevalenceType,
+      denominatorType,
+      n = NULL,
+      reportMultiplier
+    ) {
+      # set option of prevalenceType
+      checkmate::assert_choice(x = prevalenceType, choices = c("point", "period"))
+      private[['.prevalenceType']] <- prevalenceType
+    }
+  )
+)
+
+
+# Incidence Class
+# type = "proportion", "rate", "both"
+# reportMultiplier
+
+# Mortality Class
+# when = "earliest" or "indicident"
+# reportMultiplier
+# SMR/survival not right now
+
+# DemographicStrata
+# options: age, gender, race, ethnicity, location
+# or age: TRUE; gender: TRUE
+
+# populationStandardization
+# reference = 'acs', 'census' 'jpnPop'
+
