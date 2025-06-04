@@ -27,15 +27,15 @@ PimsAnalysis <- R6::R6Class(
       private[['lookbackOptions']] <- lookbackOptions
 
       # set prevalence
-      checkmate::assert_class(x = prevalence, classes = "Prevalence", null.ok = TRUE)
+      checkmate::assert_class(x = prevalence, classes = "PrevalenceOptions", null.ok = TRUE)
       private[['prevalence']] <- prevalence
 
       # set incidence
-      checkmate::assert_class(x = incidence, classes = "Incidence", null.ok = TRUE)
+      checkmate::assert_class(x = incidence, classes = "IncidenceOptions", null.ok = TRUE)
       private[['incidence']] <- incidence
 
       # set mortality
-      checkmate::assert_class(x = mortality, classes = "Mortality", null.ok = TRUE)
+      checkmate::assert_class(x = mortality, classes = "MortalityOptions", null.ok = TRUE)
       private[['mortality']] <- mortality
 
       # set strata
