@@ -33,6 +33,8 @@ anyLookBack <- function(days=0, requiredObserved = FALSE) {
 
 fixedLookBack <- function (days = 365, requiredObserved = TRUE) {
 
+  if (!is.numeric(days)) stop("Days must be numeric")
+
   fixedLookBack <- PimsAnalysis$lookBackType(
     type = "fixed",
     days = days,
@@ -42,8 +44,8 @@ fixedLookBack <- function (days = 365, requiredObserved = TRUE) {
 }
 
 #' @title
-#' creates a PeriodPrevalence specification
-#' @param denom Denominator type: either "sufficient" or Day1"
+#' creates a pointPrevalence specification
+#' @param denom Denominator type: either "sufficient","Day1", or "complete"
 #' @param n Number of days for prevalence window (required for "sufficient" denominator)
 #' @param reportMult Multiplier for reporting (default: 100,000)
 #'
@@ -51,7 +53,7 @@ fixedLookBack <- function (days = 365, requiredObserved = TRUE) {
 #'
 #' @export
 
-pointPrevalence <- function(denom = c("sufficient", "Day1"), n = NULL, reportMult = 100000) {
+pointPrevalence <- function(denom = c("sufficient", "complete", "Day1"), n = NULL, reportMult = 100000) {
 
   denom <- match.arg(denom)
 
@@ -62,6 +64,10 @@ pointPrevalence <- function(denom = c("sufficient", "Day1"), n = NULL, reportMul
 
   if(denom == "Day1") {
     if (!is.null(n)) stop("When denom = 'Day1', n must be NULL")
+  }
+
+  if(denom == "complete") {
+    if (!is.null(n)) stop("When denom = 'complete', n must be NULL")
   }
 
   stopifnot(is.numeric(reportMult), length(reportMult) == 1, reportMult > 0)
@@ -76,7 +82,7 @@ pointPrevalence <- function(denom = c("sufficient", "Day1"), n = NULL, reportMul
 
 #' Point prevalence with "sufficient" denominator
 #' @export
-pointPrevalenceSufficient - function(n=30, reportMult = 1e5) {
+pointPrevalenceSufficient <- function(n=30, reportMult = 1e5) {
   pointPrevalence(denom = "sufficient",
                   n = n,
                   reportMult = reportMult)
@@ -85,8 +91,9 @@ pointPrevalenceSufficient - function(n=30, reportMult = 1e5) {
 
 #' Point prevalence with "Day1" denominator
 #' @export
-pointPrevalenceDay1 - function(n = NULL, reportMult = 1e5) {
+pointPrevalenceDay1 <- function(n = NULL, reportMult = 1e5) {
   pointPrevalence(denom = "Day1",
                   n = n,
                   reportMult = reportMult)
 }
+
