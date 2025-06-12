@@ -9,7 +9,7 @@
 #'
 #' @export
 
-anyLookBack <- function(days=0, requiredObserved = FALSE) {
+anyLookBack <- function(requiredObserved = FALSE) {
 
 
   anyLookBack <- PimsAnalysis$lookBackType(
