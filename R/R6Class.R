@@ -392,7 +392,7 @@ populationStandardization <- R6::R6Class(
       reference)
     {
       # set option for reference
-      checkmate::assert_subset(x = reference, choices = c("acs", "census", "jpnPop"))
+      checkmate::assert_choice(x = reference, choices = c("acs", "census", "jpnPop"))
       private[['.strataOptions']] <- strataOptions
     }
   ),

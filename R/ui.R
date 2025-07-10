@@ -97,3 +97,86 @@ pointPrevalenceDay1 <- function(n = NULL, reportMult = 1e5) {
                   reportMult = reportMult)
 }
 
+#' @title
+#' creates a incidence specification
+#' @param incidenceType incidence type: either "proportion","rate", or "both"
+#' @param reportMult Multiplier for reporting (default: 100,000)
+#'
+#' @return An incidence configuration object
+#'
+#' @export
+
+incidence <- function(incidenceType = c("proportion", "rate", "both"), reportMult = 100000) {
+
+  incidenceType <- match.arg(incidenceType)
+
+  stopifnot(is.numeric(reportMult), length(reportMult) == 1, reportMult > 0)
+
+  incidence <- PimsAnalysis$incidence(
+    incidenceType = incidenceType,
+    reportMult = reportMult
+  )
+
+}
+
+
+#' @title
+#' creates a mortality specification
+#' @param mortalityType mortality type: either "earliest","incident"
+#' @param reportMult Multiplier for reporting (default: 100,000)
+#'
+#' @return A mortality configuration object
+#'
+#' @export
+
+mortality <- function(mortalityType = c("earliest", "incident"), reportMult = 100000) {
+
+  mortalityType <- match.arg(mortalityType)
+
+  stopifnot(is.numeric(reportMult), length(reportMult) == 1, reportMult > 0)
+
+  pointPrevalence <- PimsAnalysis$mortality(
+    mortalityType = mortalityType,
+    reportMult = reportMult
+  )
+
+}
+
+#' @title
+#' creates a demographicStrata specification
+#' @param strataOptions Strata options: "age", "gender", "race", "ethnicity", "location"
+#'
+#' @return A demographic strata configuration object
+#'
+#' @export
+
+demographicStrata <- function(strataOptions = c("age", "gender", "race", "ethnicity", "location")) {
+
+  if(!all(strataOptions %in% strataOptions)) {
+   stop("Invalid values. Must be one or more of: age, gender, race, ethnicity, location")
+  }
+
+  demographicStrata <- PimsAnalysis$demographicStrata(
+    strataOptions = strataOptions
+  )
+
+}
+
+#' @title
+#' creates a population standardization specification
+#' @param strataOptions Strata options: "acs", "census", "jpnPop"
+#'
+#' @return A population standardization configuration object
+#'
+#' @export
+
+populationStandardization <- function(weights = c("acs", "census", "jpnPop")) {
+
+  weights <- match.arg(weights)
+
+  populationStandardization <- PimsAnalysis$populationStandardization(
+    weights = weights
+  )
+
+}
+
