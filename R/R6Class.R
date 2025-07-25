@@ -60,6 +60,344 @@ PimsAnalysis <- R6::R6Class(
   )
 )
 
+# Prevalence class ----------------
+AnnualPrevalenceAnalysis <- R6::R6Class(
+  classname = "AnnualPrevalenceAnalysis",
+  public = list(
+
+    initialize = function(
+    analysisCohorts,
+    periodOfInterest,
+    lookbackOptions,
+    denominatorType,
+    n = NULL,
+    reportMultiplier,
+    strata = NULL,
+    populationStandarization = NULL
+    ) {
+
+      # set analysis Cohort
+      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      private[['analysisCohorts']] <- analysisCohorts
+
+      # set period of interest
+      checkmate::assert_numeric(x = periodOfInterest)
+      private[['periodOfInterest']] <- periodOfInterest
+
+      # set lookback options
+      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
+      private[['lookbackOptions']] <- lookbackOptions
+
+      # set option of denominatorType
+      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+      private[['.denominatorType']] <- denominatorType
+
+      # set strata
+      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
+      private[['strata']] <- strata
+
+      # set population standardization
+      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
+      private[['populationStandarization']] <- populationStandarization
+
+    }
+  ),
+  private = list(
+    analysisCohorts = NULL,
+    periodOfInterest = NULL,
+    lookbackOptions = NULL,
+    .denominatorType = NA_complex_,
+    .n = NULL,
+    .reportMultiplier = NA_complex_,
+    strata = NULL,
+    populationStandarization = NULL
+  ),
+  active = list(
+
+    .denominatorType = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.denominatorType
+        return(vv)
+      }
+
+      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+      private[['.denominatorType']] <- value
+
+    },
+
+    .n = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.n
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.n']] <- value
+
+    },
+
+    .reportMultiplier = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.reportMultiplier
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.reportMultiplier']] <- value
+
+    }
+  )
+)
+
+# Prevalence class ----------------
+SpanPrevalenceAnalysis <- R6::R6Class(
+  classname = "SpanPrevalenceAnalysis",
+  public = list(
+
+    initialize = function(
+    analysisCohorts,
+    periodOfInterest,
+    lookbackOptions,
+    denominatorType,
+    n = NULL,
+    reportMultiplier,
+    strata = NULL,
+    populationStandarization = NULL
+    ) {
+
+      # set analysis Cohort
+      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      private[['analysisCohorts']] <- analysisCohorts
+
+      # set period of interest
+      checkmate::assert_numeric(x = periodOfInterest)
+      private[['periodOfInterest']] <- periodOfInterest
+
+      # set lookback options
+      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
+      private[['lookbackOptions']] <- lookbackOptions
+
+      # set option of denominatorType
+      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+      private[['.denominatorType']] <- denominatorType
+
+      # set strata
+      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
+      private[['strata']] <- strata
+
+      # set population standardization
+      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
+      private[['populationStandarization']] <- populationStandarization
+
+    }
+  ),
+  private = list(
+    analysisCohorts = NULL,
+    periodOfInterest = NULL,
+    lookbackOptions = NULL,
+    .denominatorType = NA_complex_,
+    .n = NULL,
+    .reportMultiplier = NA_complex_,
+    strata = NULL,
+    populationStandarization = NULL
+  ),
+  active = list(
+
+    .denominatorType = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.denominatorType
+        return(vv)
+      }
+
+      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+      private[['.denominatorType']] <- value
+
+    },
+
+    .n = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.n
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.n']] <- value
+
+    },
+
+    .reportMultiplier = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.reportMultiplier
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.reportMultiplier']] <- value
+
+    }
+  )
+)
+
+# Incidence analysis class ----------------
+IncidenceAnalysis <- R6::R6Class(
+  classname = "IncidenceAnalysis",
+  public = list(
+
+    initialize = function(
+    analysisCohorts,
+    periodOfInterest,
+    lookbackOptions,
+    incidenceType,
+    reportMultiplier,
+    strata = NULL,
+    populationStandarization = NULL
+    ) {
+
+      # set analysis Cohort
+      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      private[['analysisCohorts']] <- analysisCohorts
+
+      # set period of interest
+      checkmate::assert_numeric(x = periodOfInterest)
+      private[['periodOfInterest']] <- periodOfInterest
+
+      # set lookback options
+      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
+      private[['lookbackOptions']] <- lookbackOptions
+
+      # set option of incidenceType
+      checkmate::assert_choice(x = incidenceType, choices = c("proportion", "rate", "both"))
+      private[['.incidenceType']] <- incidenceType
+
+      # set strata
+      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
+      private[['strata']] <- strata
+
+      # set population standardization
+      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
+      private[['populationStandarization']] <- populationStandarization
+
+    }
+  ),
+  private = list(
+    analysisCohorts = NULL,
+    periodOfInterest = NULL,
+    lookbackOptions = NULL,
+    .incidenceType = NA_character_,
+    .reportMultiplier = NA_complex_,
+    strata = NULL,
+    populationStandarization = NULL
+  ),
+  active = list(
+    .incidenceType = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.incidenceType
+        return(vv)
+      }
+
+      checkmate::assert_choice(x = value, choices = c("proportion", "rate", "both"))
+      private[['.incidenceType']] <- value
+
+    },
+
+    .reportMultiplier = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.reportMultiplier
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.reportMultiplier']] <- value
+
+    }
+  )
+)
+
+# Mortality analysis class ----------------
+MortalityAnalysis <- R6::R6Class(
+  classname = "MortalityAnalysis",
+  public = list(
+
+    initialize = function(
+    analysisCohorts,
+    periodOfInterest,
+    lookbackOptions,
+    mortalityType,
+    reportMultiplier,
+    strata = NULL,
+    populationStandarization = NULL
+    ) {
+
+      # set analysis Cohort
+      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      private[['analysisCohorts']] <- analysisCohorts
+
+      # set period of interest
+      checkmate::assert_numeric(x = periodOfInterest)
+      private[['periodOfInterest']] <- periodOfInterest
+
+      # set lookback options
+      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
+      private[['lookbackOptions']] <- lookbackOptions
+
+      # set option for mortalityType
+      checkmate::assert_choice(x = mortalityType, choices = c("earliest", "incident"))
+      private[['.mortalityType']] <- mortalityType
+
+      # set strata
+      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
+      private[['strata']] <- strata
+
+      # set population standardization
+      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
+      private[['populationStandarization']] <- populationStandarization
+
+    }
+  ),
+  private = list(
+    analysisCohorts = NULL,
+    periodOfInterest = NULL,
+    lookbackOptions = NULL,
+    .mortalityType = NA_character_,
+    .reportMultiplier = NA_complex_,
+    strata = NULL,
+    populationStandarization = NULL
+  ),
+  active = list(
+    .mortalityType = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.mortalityType
+        return(vv)
+      }
+
+      checkmate::assert_choice(x = value, choices = c("earliest","incident"))
+      private[['.mortalityType']] <- value
+
+    },
+
+    .reportMultiplier = function(value) {
+      # return the value if nothing added
+      if(missing(value)) {
+        vv <- private$.reportMultiplier
+        return(vv)
+      }
+
+      checkmate::assert_numeric(x = value, null.ok = TRUE)
+      private[['.reportMultiplier']] <- value
+
+    }
+  )
+)
+
 # Cohort Info -------------------
 CohortInfo <- R6::R6Class(
   classname = "CohortInfo",
@@ -164,188 +502,6 @@ LookBackOption <- R6::R6Class(
   )
 )
 
-# Prevalence ---------------------
-PrevalenceOptions <- R6::R6Class(
-  classname = "PrevalenceOptions",
-  public = list(
-
-    initialize = function(
-      prevalenceType,
-      denominatorType,
-      n = NULL,
-      reportMultiplier
-    ) {
-      # set option of prevalenceType
-      checkmate::assert_choice(x = prevalenceType, choices = c("point", "period"))
-      private[['.prevalenceType']] <- prevalenceType
-
-      # set option of denominatorType
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- denominatorType
-
-    }
-  ),
-  private = list(
-    .prevalenceType = NA_character_,
-    .denominatorType = NA_complex_,
-    .n = NULL,
-    .reportMultiplier = NA_complex_
-  ),
-
-  active = list(
-    prevalenceType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.prevalenceType
-        return(vv)
-      }
-
-      checkmate::assert_choice(x = value, choices = c("point", "period"))
-      private[['.prevalenceType']] <- value
-
-    },
-
-    .denominatorType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.denominatorType
-        return(vv)
-      }
-
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- value
-
-    },
-
-    .n = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.n
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.n']] <- value
-
-    },
-
-    .reportMultiplier = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.reportMultiplier
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.reportMultiplier']] <- value
-
-    }
-  )
-)
-
-
-
-# Incidence Class -------------------
-IncidenceOptions <- R6::R6Class(
-  classname = "IncidenceOptions",
-  public = list(
-
-    initialize = function(
-      incidenceType,
-      reportMultiplier
-  ) {
-    # set option of incidenceType
-    checkmate::assert_choice(x = incidenceType, choices = c("proportion", "rate", "both"))
-    private[['.incidenceType']] <- incidenceType
-
-    }
-  ),
-  private = list(
-    .incidenceType = NA_character_,
-    .reportMultiplier = NA_complex_
-  ),
-
-  active = list(
-    .incidenceType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.incidenceType
-        return(vv)
-      }
-
-      checkmate::assert_choice(x = value, choices = c("proportion", "rate", "both"))
-      private[['.incidenceType']] <- value
-
-    },
-
-    .reportMultiplier = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.reportMultiplier
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.reportMultiplier']] <- value
-
-    }
-  )
-)
-
-
-# type = "proportion", "rate", "both"
-# reportMultiplier
-
-# Mortality Class -----------------
-
-MortalityOptions <- R6::R6Class(
-  classname = "MortalityOptions",
-  public = list(
-
-    initialize = function(
-      mortalityType,
-      reportMultiplier
-  ) {
-    # set option for mortalityType
-    checkmate::assert_choice(x = mortalityType, choices = c("earliest", "incident"))
-    private[['.mortalityType']] <- mortalityType
-    }
-  ),
-  private = list(
-    .mortalityType = NA_character_,
-    .reportMultiplier = NA_complex_
-  ),
-
-  active = list(
-    .mortalityType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.mortalityType
-        return(vv)
-      }
-
-      checkmate::assert_choice(x = value, choices = c("earliest","incident"))
-      private[['.mortalityType']] <- value
-
-    },
-
-    .reportMultiplier = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.reportMultiplier
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.reportMultiplier']] <- value
-
-    }
-  )
-)
-# when = "earliest" or "indicident"
-# reportMultiplier
-# SMR/survival not right now
-
 # DemographicStrata --------------------
 
 DemographicStrata <- R6::R6Class(
@@ -392,7 +548,7 @@ populationStandardization <- R6::R6Class(
       reference)
     {
       # set option for reference
-      checkmate::assert_subset(x = reference, choices = c("acs", "census", "jpnPop"))
+      checkmate::assert_choice(x = reference, choices = c("acs", "census", "jpnPop"))
       private[['.strataOptions']] <- strataOptions
     }
   ),
