@@ -114,7 +114,7 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
   ),
   active = list(
 
-    .denominatorType = function(value) {
+    getDenominatorType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.denominatorType
@@ -126,7 +126,7 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
 
     },
 
-    .n = function(value) {
+    n = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.n
@@ -138,7 +138,7 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
 
     },
 
-    .reportMultiplier = function(value) {
+    reportMultiplier = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.reportMultiplier
@@ -206,7 +206,7 @@ SpanPrevalenceAnalysis <- R6::R6Class(
   ),
   active = list(
 
-    .denominatorType = function(value) {
+    getDenominatorType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.denominatorType
@@ -218,7 +218,7 @@ SpanPrevalenceAnalysis <- R6::R6Class(
 
     },
 
-    .n = function(value) {
+    n = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.n
@@ -230,7 +230,7 @@ SpanPrevalenceAnalysis <- R6::R6Class(
 
     },
 
-    .reportMultiplier = function(value) {
+    reportMultiplier = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.reportMultiplier
@@ -295,7 +295,7 @@ IncidenceAnalysis <- R6::R6Class(
     populationStandarization = NULL
   ),
   active = list(
-    .incidenceType = function(value) {
+    getIncidenceType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.incidenceType
@@ -307,7 +307,7 @@ IncidenceAnalysis <- R6::R6Class(
 
     },
 
-    .reportMultiplier = function(value) {
+    reportMultiplier = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.reportMultiplier
@@ -372,7 +372,7 @@ MortalityAnalysis <- R6::R6Class(
     populationStandarization = NULL
   ),
   active = list(
-    .mortalityType = function(value) {
+    getMortalityType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.mortalityType
@@ -384,7 +384,7 @@ MortalityAnalysis <- R6::R6Class(
 
     },
 
-    .reportMultiplier = function(value) {
+    reportMultiplier = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.reportMultiplier
@@ -522,7 +522,7 @@ DemographicStrata <- R6::R6Class(
   ),
 
   active = list(
-    .strataOptions = function(value) {
+    getStrataOptions = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.strataOptions
@@ -557,7 +557,7 @@ populationStandardization <- R6::R6Class(
   ),
 
   active = list(
-    .reference = function(value) {
+    getReference = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.reference
