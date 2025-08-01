@@ -1,7 +1,9 @@
 /* Do incidence rate */
-DROP TABLE IF EXISTS #incidence_rate;
-CREATE TABLE #incidence_rate AS
+IF OBJECT_ID('#incidence_rate', 'U') IS NOT NULL
+  DROP TABLE #incidence_rate;
+
 SELECT *, (numerator / (denom / 365.25)) * @multiplier AS ir
+INTO #incidence_rate
 FROM(
   SELECT
     calendar_year, gender_concept_id, age,
