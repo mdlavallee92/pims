@@ -2,61 +2,89 @@
 PimsAnalysis <- R6::R6Class(
   classname = "PimsAnalysis",
   public = list(
-
     initialize = function(
       analysisCohorts,
-      periodOfInterest,
-      lookbackOptions,
       prevalence = NULL,
       incidence = NULL,
       mortality = NULL,
-      strata = NULL,
-      populationStandarization = NULL
+      strata = NULL
     ) {
 
       # set analysis Cohort
-      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
-      private[['analysisCohorts']] <- analysisCohorts
-
-      # set period of interest
-      checkmate::assert_numeric(x = periodOfInterest)
-      private[['periodOfInterest']] <- periodOfInterest
-
-      # set lookback options
-      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
-      private[['lookbackOptions']] <- lookbackOptions
+      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      private[['.analysisCohorts']] <- analysisCohorts
 
       # set prevalence
       checkmate::assert_class(x = prevalence, classes = "PrevalenceOptions", null.ok = TRUE)
-      private[['prevalence']] <- prevalence
+      private[['.prevalence']] <- prevalence
 
       # set incidence
-      checkmate::assert_class(x = incidence, classes = "IncidenceOptions", null.ok = TRUE)
-      private[['incidence']] <- incidence
+      checkmate::assert_class(x = incidence, classes = "IncidenceAnalysis", null.ok = TRUE)
+      private[['.incidence']] <- incidence
 
       # set mortality
       checkmate::assert_class(x = mortality, classes = "MortalityOptions", null.ok = TRUE)
-      private[['mortality']] <- mortality
+      private[['.mortality']] <- mortality
 
-      # set strata
+      # set strata (default if NULL)
+      if (is.null(strata)) {
+        strata <- DemographicStrata$new(strataOptions = c("gender", "age"))
+      }
       checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
-      private[['strata']] <- strata
-
-      # set population standardization
-      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
-      private[['populationStandarization']] <- populationStandarization
-
+      private[['.strata']] <- strata
     }
   ),
+
   private = list(
-    analysisCohorts = NULL,
-    periodOfInterest = NULL,
-    lookbackOptions = NULL,
-    prevalence = NULL,
-    incidence = NULL,
-    mortality = NULL,
-    strata = NULL,
-    populationStandarization = NULL
+    .analysisCohorts = NULL,
+    .prevalence = NULL,
+    .incidence = NULL,
+    .mortality = NULL,
+    .strata = NULL
+    ),
+
+  active = list(
+    analysisCohorts = function(value) {
+      if (missing(value)) {
+        return(private$.analysisCohorts)
+      }
+      checkmate::assert_list(value, types = "CohortInfo", min.len = 1)
+      private$analysisCohorts <- value
+    },
+
+    prevalence = function(value) {
+      if (missing(value)) {
+        return(private$.prevalence)
+      }
+      checkmate::assert_class(value, "PrevalenceOptions", null.ok = TRUE)
+      private$.prevalence <- value
+    },
+
+    incidence = function(value) {
+      if (missing(value)) {
+        return(private$.incidence)
+      }
+      checkmate::assert_class(value, "IncidenceAnalysis", null.ok = TRUE)
+      private$.incidence <- value
+    },
+
+    mortality = function(value) {
+      if (missing(value)) {
+        return(private$.mortality)
+      }
+      checkmate::assert_class(value, "MortalityOptions", null.ok = TRUE)
+      private$.mortality <- value
+    },
+
+    strata = function(value) {
+      if (missing(value)) {
+        return(private$.strata)
+      }
+      checkmate::assert_class(value, "DemographicStrata", null.ok = TRUE)
+      private$.strata <- value
+    }
+
+
   )
 )
 
@@ -64,7 +92,6 @@ PimsAnalysis <- R6::R6Class(
 AnnualPrevalenceAnalysis <- R6::R6Class(
   classname = "AnnualPrevalenceAnalysis",
   public = list(
-
     initialize = function(
     analysisCohorts,
     periodOfInterest,
@@ -73,15 +100,15 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
     n = NULL,
     reportMultiplier,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
     ) {
 
       # set analysis Cohort
-      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
       private[['analysisCohorts']] <- analysisCohorts
 
       # set period of interest
-      checkmate::assert_numeric(x = periodOfInterest)
+      checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
       private[['periodOfInterest']] <- periodOfInterest
 
       # set lookback options
@@ -97,8 +124,8 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
       private[['strata']] <- strata
 
       # set population standardization
-      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
-      private[['populationStandarization']] <- populationStandarization
+      checkmate::assert_class(x = populationStandardization, classes = "populationStandardization", null.ok = TRUE)
+      private[['populationStandardization']] <- populationStandardization
 
     }
   ),
@@ -110,11 +137,11 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
     .n = NULL,
     .reportMultiplier = NA_complex_,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
   ),
   active = list(
 
-    getDenominatorType = function(value) {
+    denominatorType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.denominatorType
@@ -165,15 +192,15 @@ SpanPrevalenceAnalysis <- R6::R6Class(
     n = NULL,
     reportMultiplier,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
     ) {
 
       # set analysis Cohort
-      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
       private[['analysisCohorts']] <- analysisCohorts
 
       # set period of interest
-      checkmate::assert_numeric(x = periodOfInterest)
+      checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
       private[['periodOfInterest']] <- periodOfInterest
 
       # set lookback options
@@ -189,8 +216,8 @@ SpanPrevalenceAnalysis <- R6::R6Class(
       private[['strata']] <- strata
 
       # set population standardization
-      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
-      private[['populationStandarization']] <- populationStandarization
+      checkmate::assert_class(x = populationStandardization, classes = "populationStandardization", null.ok = TRUE)
+      private[['populationStandardization']] <- populationStandardization
 
     }
   ),
@@ -202,11 +229,11 @@ SpanPrevalenceAnalysis <- R6::R6Class(
     .n = NULL,
     .reportMultiplier = NA_complex_,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
   ),
   active = list(
 
-    getDenominatorType = function(value) {
+    denominatorType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.denominatorType
@@ -248,54 +275,38 @@ SpanPrevalenceAnalysis <- R6::R6Class(
 IncidenceAnalysis <- R6::R6Class(
   classname = "IncidenceAnalysis",
   public = list(
-
     initialize = function(
-    analysisCohorts,
     periodOfInterest,
-    lookbackOptions,
     incidenceType,
     reportMultiplier,
-    strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
     ) {
 
-      # set analysis Cohort
-      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
-      private[['analysisCohorts']] <- analysisCohorts
-
       # set period of interest
-      checkmate::assert_numeric(x = periodOfInterest)
-      private[['periodOfInterest']] <- periodOfInterest
-
-      # set lookback options
-      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
-      private[['lookbackOptions']] <- lookbackOptions
+      checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
+      private[['.periodOfInterest']] <- periodOfInterest
 
       # set option of incidenceType
       checkmate::assert_choice(x = incidenceType, choices = c("proportion", "rate", "both"))
       private[['.incidenceType']] <- incidenceType
 
-      # set strata
-      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
-      private[['strata']] <- strata
-
-      # set population standardization
-      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
-      private[['populationStandarization']] <- populationStandarization
+      # set multiplier
+      checkmate::assert_numeric(x = reportMultiplier, null.ok = TRUE)
+      private[['.reportMultiplier']] <- reportMultiplier
 
     }
   ),
+
   private = list(
-    analysisCohorts = NULL,
-    periodOfInterest = NULL,
+    .periodOfInterest = NULL,
     lookbackOptions = NULL,
     .incidenceType = NA_character_,
     .reportMultiplier = NA_complex_,
-    strata = NULL,
-    populationStandarization = NULL
-  ),
+    .results = NULL
+    ),
+
   active = list(
-    getIncidenceType = function(value) {
+    incidenceType = function(value) {
       # return the value if nothing added
       if(missing(value)) {
         vv <- private$.incidenceType
@@ -317,7 +328,29 @@ IncidenceAnalysis <- R6::R6Class(
       checkmate::assert_numeric(x = value, null.ok = TRUE)
       private[['.reportMultiplier']] <- value
 
+    },
+
+    periodOfInterest = function(value){
+
+      if(missing(value)){
+        vv <- private$.periodOfInterest
+        return(vv)
+      }
+      checkmate::assert_class(x = value, classes = "PeriodOfInterest")
+      private[['.periodOfInterest']] <- value
+    },
+
+    results = function(value) {
+      if (missing(value)) {
+        # Getter: return stored results
+        return(private$.results)
+      } else {
+        # Setter: validate and store results
+        checkmate::assert_data_frame(value)
+        private$.results <- value
+      }
     }
+
   )
 )
 
@@ -333,15 +366,15 @@ MortalityAnalysis <- R6::R6Class(
     mortalityType,
     reportMultiplier,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
     ) {
 
       # set analysis Cohort
-      checkmate::assert_list(x = analysisCohort, types = "CohortInfo", null.ok = FALSE, min.len = 1)
+      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
       private[['analysisCohorts']] <- analysisCohorts
 
       # set period of interest
-      checkmate::assert_numeric(x = periodOfInterest)
+      checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
       private[['periodOfInterest']] <- periodOfInterest
 
       # set lookback options
@@ -357,8 +390,8 @@ MortalityAnalysis <- R6::R6Class(
       private[['strata']] <- strata
 
       # set population standardization
-      checkmate::assert_class(x = populationStandarization, classes = "PopulationStandarization", null.ok = TRUE)
-      private[['populationStandarization']] <- populationStandarization
+      checkmate::assert_class(x = populationStandardization, classes = "populationStandardization", null.ok = TRUE)
+      private[['populationStandardization']] <- populationStandardization
 
     }
   ),
@@ -369,7 +402,7 @@ MortalityAnalysis <- R6::R6Class(
     .mortalityType = NA_character_,
     .reportMultiplier = NA_complex_,
     strata = NULL,
-    populationStandarization = NULL
+    populationStandardization = NULL
   ),
   active = list(
     getMortalityType = function(value) {
@@ -405,30 +438,30 @@ CohortInfo <- R6::R6Class(
     #' @param id the cohort definition id
     #' @param name the name of the cohort definition
     initialize = function(id, name) {
-      .setNumber(private = private, key = "id", value = id)
-      .setString(private = private, key = "name", value = name)
+      .setNumber(private = private, key = ".id", value = id)
+      .setString(private = private, key = ".name", value = name)
     },
     #' @description get the cohort id
-    getId = function() {
-      cId <- private$id
+    id = function() {
+      cId <- private$.id
       return(cId)
     },
     #' @description get the cohort name
-    getName = function() {
-      cName <- private$name
+    name = function() {
+      cName <- private$.name
       return(cName)
     },
     #' @description print the cohort details
     cohortDetails = function(){
-      id <- self$getId()
-      name <- self$getName()
+      id <- self$id()
+      name <- self$name()
       info <- glue::glue_col( "\t- Cohort Id: {green {id}}; Cohort Name: {green {name}}")
       return(info)
       }
      ),
    private = list(
-    id = NULL,
-    name = NULL
+    .id = NULL,
+    .name = NULL
    )
 )
 
@@ -512,27 +545,30 @@ DemographicStrata <- R6::R6Class(
     strataOptions
       )
     {
-    # set option for strataOptions
+    # set option for strata
       checkmate::assert_subset(x = strataOptions, choices = c("age", "gender", "race", "ethnicity", "location"))
       private[['.strataOptions']] <- strataOptions
     }
   ),
   private = list(
-    .strataOptions = NA_character_
+    .strataOptions = NA_character_,
+    .mapping = list(
+      gender = "gender_concept_id",
+      age = "age",
+      race = "race_concept_id",
+      location = "location_id",
+      calendar_year = "calendar_year"
+    )
   ),
 
   active = list(
-    getStrataOptions = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.strataOptions
-        return(vv)
-      }
 
-      checkmate::assert_subset(x = value, choices = c("age", "gender", "race", "ethnicity", "location"))
-      private[['.strataOptions']] <- value
-
+    strataOptions = function() {
+      # Map strataCols using internal mapping
+      vec <- unlist(unname(private$.mapping[private$.strataOptions]))
+      return(paste(vec, collapse = ", "))
     }
+
   )
 )
 # options: age, gender, race, ethnicity, location
@@ -571,3 +607,21 @@ populationStandardization <- R6::R6Class(
   )
 )
 
+# Period of interest -------------------------
+PeriodOfInterest <- R6::R6Class(
+  "PeriodOfInterest",
+  public = list(
+    startYear = NULL,
+    endYear = NULL,
+    initialize = function(startYear, endYear) {
+      checkmate::assert_int(startYear)
+      checkmate::assert_int(endYear)
+      if (startYear > endYear) stop("startYear must be <= endYear")
+      self$startYear <- startYear
+      self$endYear <- endYear
+    },
+    duration = function() {
+      self$endYear - self$startYear + 1
+    }
+  )
+)
