@@ -1,7 +1,7 @@
 /* Do Point Prevalence*/
 DROP TABLE IF EXISTS #point_prevalence;
-CREATE TABLE #point_prevalence AS
 SELECT *, (numerator / denom) * 100000 AS prev
+INTO #point_prevalence
 FROM (
 SELECT calendar_year, gender_concept_id, age, SUM(prevalent_event) AS numerator, SUM(rn1) AS denom
 FROM (
