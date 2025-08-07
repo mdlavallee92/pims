@@ -1,0 +1,87 @@
+---
+title: "PIMS Methodology"
+author:     
+  - name: Martin Lavallee
+  - name: Carmen Ng
+output: html_document
+---
+
+# Introduction
+
+This document outlines the methodological framework used in the PIMS package, which aims to 
+standardize and automate surveillance calculations for **prevalence**, **incidence**, and **mortality**
+using OMOP Common Data Model. The approach is heavily based on Rassen et al. (2018), with
+enhancements for span-based prevalence and options for population standardization.
+
+# Goals
+
+- Provide reliable estimates of **point** and **period** prevalence
+- Estimate **incidence proportion** and **incidence rate** over user-defined periods
+- Support **standardization** using demographic weights
+
+# Use cases
+
+- **Forecasting models**: Identify burden over calendar years
+- **Epidemiology studies**: Capture static estimates over a defined span
+- **Health economics and outcomes research**: Analyze burden using standardized outputs
+
+# Methodology overview
+
+## Step 1: Define the period of interest (POI)
+
+The user must define a time window (e.g., 2020-2023) for calculating prevalence and incidence
+
+- **Yearly POIs**: calendar-based prevalence/incidence
+- **Span-based POIs**: combined estimates across multiple years
+
+## Step 2: Define lookback period
+
+- **LB1**: All available patient history
+- **LB2a**: Fixed lookback time (e.g. 365 days)
+- **LB2b**: Fixed time *with full observation coverage*
+
+## Step 3: Define prevalence
+
+- **Numerator**: patients with condition at baseline or during sufficient follow-up time within the POI
+- **Denominator**: patients with sufficient time in the observation period 
+
+## Step 4: Define incidence
+
+### Incidence proportion
+
+- **Numerator**: Patients who developed condition in POI
+- **Denominator**: Patients with  sufficient time in the observation period excluding prevalent cases
+
+### Incidence rate
+
+- **Numerator**: Patients who developed condition in POI
+- **Denominator**: Total *at-risk person-time* during POI
+
+## Step 5: Mortality
+
+- Option to define mortality using:  
+  - **Incident cohort** as denominator  
+  - **Prevalent cohort** as denominator  
+  
+## Standardization (optional)
+
+Standardization is applied to control for differences in age and sex
+
+### Approach 
+
+1. Stratify data by standardization variables (age and sex)
+2. Calculate crude rate per stratum
+3. Multiply by external weight (e.g. census proportions).
+4. Sum across strata
+5. Apply multiplier (e.g., per 100,000)
+
+### Options for age assignment - for period prevalence and incidence denominator
+
+- **Age at start**
+- **Midpoint age**
+- **Fractional time contribution** (most accurate, computational intensive)
+
+# References
+- Rassen, J.A., et al. (2018). *Measuring prevalence and incidence of chronic conditions in claims and electronic health record databases*
+
+
