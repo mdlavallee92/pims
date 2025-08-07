@@ -6,14 +6,15 @@ SELECT *, (numerator / (denom / 365.25)) * @multiplier AS ir
 INTO #incidence_rate
 FROM(
   SELECT
-    calendar_year, gender_concept_id, age,
+    calendar_year,
+    @strata,
     SUM(post_index_event) AS numerator, SUM(time_at_risk) AS denom
   FROM (
     SELECT person_id, rn1, post_index_event,
         calendar_year,
         CASE WHEN post_index_event = 1 THEN DATEDIFF(day, calendar_start_date, index_date)
             ELSE DATEDIFF(day, calendar_start_date, calendar_end_date) END AS time_at_risk,
-            gender_concept_id, age
+            @strata
     FROM (
         SELECT
             *,
@@ -24,6 +25,6 @@ FROM(
     )
     WHERE post_index_event != 2 and rn1 = 1
   )
-  GROUP BY calendar_year, gender_concept_id, age /* ONLY group by gender and age */
+  GROUP BY calendar_year, @strata /* ONLY group by gender and age */
 )
 ;
