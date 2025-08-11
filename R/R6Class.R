@@ -15,7 +15,7 @@ PimsAnalysis <- R6::R6Class(
       private[['.analysisCohorts']] <- analysisCohorts
 
       # set prevalence
-      checkmate::assert_class(x = prevalence, classes = "PrevalenceOptions", null.ok = TRUE)
+      checkmate::assert_class(x = prevalence, classes = "AnnualPrevalenceAnalysis", null.ok = TRUE)
       private[['.prevalence']] <- prevalence
 
       # set incidence
@@ -56,7 +56,7 @@ PimsAnalysis <- R6::R6Class(
       if (missing(value)) {
         return(private$.prevalence)
       }
-      checkmate::assert_class(value, "PrevalenceOptions", null.ok = TRUE)
+      checkmate::assert_class(value, "AnnualPrevalenceAnalysis", null.ok = TRUE)
       private$.prevalence <- value
     },
 
@@ -93,88 +93,97 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
   classname = "AnnualPrevalenceAnalysis",
   public = list(
     initialize = function(
-    analysisCohorts,
     periodOfInterest,
-    lookbackOptions,
-    denominatorType,
-    n = NULL,
+    # lookbackOptions,
+    # denominatorType,
+    # n = NULL,
     reportMultiplier,
-    strata = NULL,
     populationStandardization = NULL
     ) {
 
-      # set analysis Cohort
-      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
-      private[['analysisCohorts']] <- analysisCohorts
-
       # set period of interest
       checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
-      private[['periodOfInterest']] <- periodOfInterest
+      private[['.periodOfInterest']] <- periodOfInterest
 
-      # set lookback options
-      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
-      private[['lookbackOptions']] <- lookbackOptions
+      # # set lookback options
+      # checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
+      # private[['lookbackOptions']] <- lookbackOptions
 
-      # set option of denominatorType
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- denominatorType
-
-      # set strata
-      checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
-      private[['strata']] <- strata
+      # # set option of denominatorType
+      # checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+      # private[['.denominatorType']] <- denominatorType
 
       # set population standardization
       checkmate::assert_class(x = populationStandardization, classes = "populationStandardization", null.ok = TRUE)
-      private[['populationStandardization']] <- populationStandardization
+      private[['.populationStandardization']] <- populationStandardization
 
     }
   ),
   private = list(
-    analysisCohorts = NULL,
-    periodOfInterest = NULL,
-    lookbackOptions = NULL,
-    .denominatorType = NA_complex_,
-    .n = NULL,
-    .reportMultiplier = NA_complex_,
-    strata = NULL,
-    populationStandardization = NULL
+    .periodOfInterest = NULL,
+    # lookbackOptions = NULL,
+    # .denominatorType = NA_complex_,
+    # .n = NULL,
+    .populationStandardization = NULL,
+    .results = NULL
   ),
   active = list(
 
-    denominatorType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.denominatorType
+    # denominatorType = function(value) {
+    #   # return the value if nothing added
+    #   if(missing(value)) {
+    #     vv <- private$.denominatorType
+    #     return(vv)
+    #   }
+    #
+    #   checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
+    #   private[['.denominatorType']] <- value
+    #
+    # },
+#
+#     n = function(value) {
+#       # return the value if nothing added
+#       if(missing(value)) {
+#         vv <- private$.n
+#         return(vv)
+#       }
+#
+#       checkmate::assert_numeric(x = value, null.ok = TRUE)
+#       private[['.n']] <- value
+#
+#     },
+#
+#     reportMultiplier = function(value) {
+#       # return the value if nothing added
+#       if(missing(value)) {
+#         vv <- private$.reportMultiplier
+#         return(vv)
+#       }
+#
+#       checkmate::assert_numeric(x = value, null.ok = TRUE)
+#       private[['.reportMultiplier']] <- value
+#
+#     },
+
+    periodOfInterest = function(value){
+
+      if(missing(value)){
+        vv <- private$.periodOfInterest
         return(vv)
       }
-
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- value
-
+      checkmate::assert_class(x = value, classes = "PeriodOfInterest")
+      private[['.periodOfInterest']] <- value
     },
 
-    n = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.n
-        return(vv)
+    results = function(value) {
+      if (missing(value)) {
+        # Getter: return stored results
+        return(private$.results)
+      } else {
+        # Setter: validate and store results
+        checkmate::assert_data_frame(value)
+        private$.results <- value
       }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.n']] <- value
-
-    },
-
-    reportMultiplier = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.reportMultiplier
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.reportMultiplier']] <- value
-
     }
   )
 )
@@ -565,8 +574,8 @@ DemographicStrata <- R6::R6Class(
 
     strataOptions = function() {
       # Map strataCols using internal mapping
-      vec <- unlist(unname(private$.mapping[private$.strataOptions]))
-      return(paste(vec, collapse = ", "))
+      vec <- unlist(unname(private$.mapping[private$.strataOptions])) |> paste(collapse = ", ")
+      return(vec)
     }
 
   )

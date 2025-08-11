@@ -1,9 +1,12 @@
 /* Do Point Prevalence*/
-DROP TABLE IF EXISTS #point_prevalence;
+/* Do incidence rate */
+IF OBJECT_ID('#point_prevalence', 'U') IS NOT NULL
+  DROP TABLE #point_prevalence;
+
 SELECT *, (numerator / denom) * 100000 AS prev
 INTO #point_prevalence
 FROM (
-SELECT calendar_year, gender_concept_id, age, SUM(prevalent_event) AS numerator, SUM(rn1) AS denom
+SELECT calendar_year, @strata, SUM(prevalent_event) AS numerator, SUM(rn1) AS denom
 FROM (
 SELECT
     person_id,
@@ -13,5 +16,5 @@ SELECT
 FROM #obsPop2
 )
 WHERE rn1 = 1
-GROUP BY calendar_year, gender_concept_id, age /* ONLY group by gender and age */
+GROUP BY calendar_year, @strata /* ONLY group by gender and age */
 );

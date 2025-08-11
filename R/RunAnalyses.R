@@ -54,7 +54,43 @@ runIncidenceAnalysis <- function(connectionDetails,
   )
   executeSql(connection, sql)
 
-  results <- dbGetQuery(connection, "SELECT * FROM incidence_rate;") %>% as_tibble()
+  results <- dbGetQuery(connection, "SELECT * FROM incidence_rate;") |> tibble::as_tibble()
+
+  disconnect(connection)
+
+  return(results)
+
+}
+
+runAnnualPrevalenceAnalysis <- function(connectionDetails,
+                                        cdmDatabaseSchema,
+                                        cohortDatabaseSchema,
+                                        cohortTable,
+                                        targetCohort,
+                                        incidenceAnalysis,
+                                        strata,
+                                        tempEmulationSchema = getOption("sqlRenderTempEmulationSchema")){
+
+  connection <- connect(connectionDetails)
+  sql <- renderObservationPeriod(connectionDetails = connectionDetails,
+                                 cdmDatabaseSchema = cdmDatabaseSchema,
+                                 cohortDatabaseSchema = cohortDatabaseSchema,
+                                 cohortTable = cohortTable,
+                                 startYear = incidenceAnalysis$periodOfInterest$startYear,
+                                 endYear = incidenceAnalysis$periodOfInterest$endYear,
+                                 targetCohortId = targetCohort$id())
+
+  executeSql(connection, sql)
+
+  sql <- loadRenderTranslateSql(
+    "pointPrevalence.sql",
+    "pims",
+    dbms = connectionDetails$dbms,
+    strata = strata
+  )
+  executeSql(connection, sql)
+
+  results <- dbGetQuery(connection, "SELECT * FROM point_prevalence;") |> tibble::as_tibble()
 
   disconnect(connection)
 
@@ -89,8 +125,19 @@ runPimsAnalysis <- function(connectionDetails,
   }
 
   if(!is.null(pimsResult$prevalence)){
-    #do run analysis
-  }
+    targetCohort <- pimsResult$analysisCohorts[[1]] #TODO: Match on target cohort id or name in sep argument
+    prevalenceResult <- runAnnualPrevalenceAnalysis(
+      connectionDetails = connectionDetails,
+      cdmDatabaseSchema = cdmDatabaseSchema,
+      cohortDatabaseSchema = cohortDatabaseSchema,
+      cohortTable = cohortTable,
+      targetCohort = targetCohort,
+      incidenceAnalysis = pimsResult$incidence,
+      tempEmulationSchema = tempEmulationSchema,
+      strata = pimsAnalysis$strata$strataOptions)
+
+    pimsResult$prevalence$results <- prevalenceResult
+    }
 
   return(pimsResult)
 

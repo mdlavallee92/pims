@@ -23,12 +23,16 @@ cohortInfoList <- list(cohortInfo)
 strataOptions <- createStrataOptions(c("age", "gender", "race")) #options: age, gender, race, location, ethnicity
 periodOfInterest <- createPeriodOfInterest(1950, 2025)
 
-# Step 2: Create incidence options
+# Step 2: Create incidence/prevalence options
 incidenceAnalysis <- createIncidenceAnalysis(periodOfInterest = periodOfInterest,
                                              incidenceType = "rate",
                                              reportMultiplier = 1e+05)
+prevalenceAnalysis <- createAnnualPrevalenceAnalysis(periodOfInterest = periodOfInterest,
+                                                     reportMultiplier = 1e+05)
+
 pimsAnalysis <- createPimsAnalysis(analysisCohorts = cohortInfoList,
                                    incidence = incidenceAnalysis,
+                                   prevalence = prevalenceAnalysis,
                                    strata = strataOptions)
 
 # Result
@@ -39,3 +43,7 @@ pimsResult <- runPimsAnalysis(connectionDetails = connectionDetails,
                               pimsAnalysis = pimsAnalysis)
 
 pimsResult$incidence$results
+pimsResult$prevalence$results
+
+# Test prevalence
+

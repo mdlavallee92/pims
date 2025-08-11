@@ -77,6 +77,32 @@ createIncidenceAnalysis <- function(
   )
 }
 
+#' Create an AnnualPrevalenceAnalysis object
+#'
+#' Constructs an `AnnualPrevalenceAnalysis` object with the specified settings.
+#'
+#' @param cohortOfInterest `CohortInfo` object of interest (required).
+#' @param periodOfInterest Numeric vector specifying the period of interest (required).
+#' @param lookbackOptions A `LookBackOption` object (required).
+#' @param incidenceType Character string: one of `"proportion"`, `"rate"`, or `"both"` (required).
+#' @param reportMultiplier Numeric value used for scaling the incidence report (optional).
+#' @param strata A `DemographicStrata` object (optional).
+#' @param populationStandardization A `PopulationStandardization` object (optional).
+#'
+#' @return An `AnnualPrevalenceAnalysis` R6 object.
+#' @export
+createAnnualPrevalenceAnalysis <- function(
+    periodOfInterest,
+    reportMultiplier = 100000,
+    populationStandardization = NULL
+) {
+  AnnualPrevalenceAnalysis$new(
+    periodOfInterest = periodOfInterest,
+    reportMultiplier = reportMultiplier,
+    populationStandardization = populationStandardization
+  )
+}
+
 #' Create a PeriodOfInterest object
 #'
 #' @param startYear Integer start year.
