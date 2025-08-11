@@ -5,7 +5,7 @@ library(SqlRender)
 # options(sqlRenderTempEmulationSchema = "main")
 
 connectionDetails <- getEunomiaConnectionDetails()
-connection <- connect(connectionDetails)
+connection <- DatabaseConnector::connect(connectionDetails)
 
 createCohorts(
   connectionDetails,
@@ -44,6 +44,4 @@ pimsResult <- runPimsAnalysis(connectionDetails = connectionDetails,
 
 pimsResult$incidence$results
 pimsResult$prevalence$results
-
-# Test prevalence
 

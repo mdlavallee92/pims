@@ -10,4 +10,6 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports:
-    tibble
+    tibble,
+    DatabaseConnector
+RoxygenNote: 7.3.2
