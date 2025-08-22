@@ -1,0 +1,104 @@
+---
+title: "Running PIMS"
+format: html
+editor: source
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,          # show code by default
+  warning = FALSE,      # hide warnings
+  message = FALSE,      # hide messages
+  fig.width = 7,        # default figure width (in inches)
+  fig.height = 5,       # default figure height
+  dpi = 96,             # figure resolution
+  cache = FALSE         # disable caching (set TRUE if you want caching)
+)
+
+library(Eunomia)
+library(pims)
+```
+
+## Overview
+
+This tutorial walks you through running a `PIMS` (Prevalence and Incidence Measurement System) analysis for the simplest baseline annual prevalence and incidence rate cases.
+PIMS uses R6 classes to specify all the parameters for your analysis before running it.
+
+## Using `Eunomia` and defining cohorts
+The `Eunomia` package provides a small, in-memory SQLite database. 
+Its cohorts do not have any interesting incidence/prevalence results (0 in the numerator for the outcome of interest), but we use it to try PIMS without using real patient data.
+
+```{r}
+connectionDetails <- getEunomiaConnectionDetails()
+connection <- DatabaseConnector::connect(connectionDetails)
+
+createCohorts(
+  connectionDetails,
+  cdmDatabaseSchema = "main",
+  cohortDatabaseSchema = "main",
+  cohortTable = "cohort"
+)
+```
+
+## Step 1: Cohort options
+
+In this use case, we are interested in the incidence/prevalence of users of Celecoxib.
+
+```{r}
+cohortInfo <- createCohortInfo(id = 1,
+                               name = "Celecoxib")
+cohortInfoList <- list(cohortInfo)
+```
+
+# Step 2: Overall analysis options
+
+We now create the R6-class options for how we want our incidence/prevalence analyses to be ran, such as the stratification columns and the start/end years for the study period of interest.
+
+```{r}
+strataOptions <- createStrataOptions(c("age", "gender", "race")) #options: age, gender, race, location, ethnicity
+periodOfInterest <- createPeriodOfInterest(1950, 2025)
+```
+
+# Step 3: Create incidence/prevalence options
+
+If we are interested in both incidence and prevalence analyses, we specify their options while using the previously-created class `periodOfInterest`:
+```{r}
+incidenceAnalysis <- createIncidenceAnalysis(periodOfInterest = periodOfInterest,
+                                             incidenceType = "rate",
+                                             reportMultiplier = 1e+05)
+prevalenceAnalysis <- createAnnualPrevalenceAnalysis(periodOfInterest = periodOfInterest,
+                                                     reportMultiplier = 1e+05)
+```
+
+# Step 4: Wrap everything into `pimsAnalysis`
+
+Finally, we wrap up all of the classes into one blueprint object `createPimsAnalysis` and run the blueprint with `runPimsAnalysis`:
+
+```{r, results='hide'}
+pimsAnalysis <- createPimsAnalysis(analysisCohorts = cohortInfoList,
+                                   incidence = incidenceAnalysis,
+                                   prevalence = prevalenceAnalysis,
+                                   strata = strataOptions)
+
+# Result
+pimsResult <- runPimsAnalysis(connectionDetails = connectionDetails,
+                              cdmDatabaseSchema = "main",
+                              cohortDatabaseSchema =  "main",
+                              cohortTable = "cohort",
+                              pimsAnalysis = pimsAnalysis)
+```
+
+# Viewing results
+
+At this moment, we can view all of the analysis specifications within the objects directly inside `pimsResult`.
+We can also view the results themselves through the results objects:
+
+```{r}
+# See the analysis settings
+pimsResult$incidence
+pimsResult$prevalence
+
+# See the analysis results
+pimsResult$incidence$results
+pimsResult$prevalence$results
+```
