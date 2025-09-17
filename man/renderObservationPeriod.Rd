@@ -11,9 +11,10 @@ renderObservationPeriod(
   cohortTable,
   startYear,
   endYear,
-  required_op_length = 0,
+  required_op_length,
   targetCohortId,
-  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema")
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
+  outputFolder
 )
 }
 \arguments{

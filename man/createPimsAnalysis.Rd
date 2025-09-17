@@ -6,7 +6,8 @@
 \usage{
 createPimsAnalysis(
   analysisCohorts,
-  prevalence = NULL,
+  annualPrevalence = NULL,
+  spanPrevalence = NULL,
   incidence = NULL,
   mortality = NULL,
   strata = NULL
@@ -15,13 +16,13 @@ createPimsAnalysis(
 \arguments{
 \item{analysisCohorts}{A list of `CohortInfo` objects (required).}
 
-\item{prevalence}{A `PrevalenceOptions` object (optional).}
-
 \item{incidence}{An `IncidenceOptions` object (optional).}
 
 \item{mortality}{A `MortalityOptions` object (optional).}
 
 \item{strata}{A `DemographicStrata` object (optional).}
+
+\item{prevalence}{A `PrevalenceOptions` object (optional).}
 }
 \value{
 A `PimsAnalysis` R6 object.

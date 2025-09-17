@@ -11,8 +11,10 @@ runAnnualPrevalenceAnalysis(
   cohortTable,
   targetCohort,
   prevalenceAnalysis,
-  strata,
-  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema")
+  required_op_length = 0,
+  strata = NULL,
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
+  outputFolder
 )
 }
 \arguments{

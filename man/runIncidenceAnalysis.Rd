@@ -11,8 +11,10 @@ runIncidenceAnalysis(
   cohortTable,
   targetCohort,
   incidenceAnalysis,
-  strata,
-  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema")
+  strata = NULL,
+  required_op_length = 0,
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
+  outputFolder
 )
 }
 \arguments{

@@ -4,7 +4,8 @@ PimsAnalysis <- R6::R6Class(
   public = list(
     initialize = function(
       analysisCohorts,
-      prevalence = NULL,
+      annualPrevalence = NULL,
+      spanPrevalence = NULL,
       incidence = NULL,
       mortality = NULL,
       strata = NULL
@@ -15,8 +16,11 @@ PimsAnalysis <- R6::R6Class(
       private[['.analysisCohorts']] <- analysisCohorts
 
       # set prevalence
-      checkmate::assert_class(x = prevalence, classes = "AnnualPrevalenceAnalysis", null.ok = TRUE)
-      private[['.prevalence']] <- prevalence
+      checkmate::assert_class(x = annualPrevalence, classes = "AnnualPrevalenceAnalysis", null.ok = TRUE)
+      private[['.annualPrevalence']] <- annualPrevalence
+
+      checkmate::assert_class(x = spanPrevalence, classes = "SpanPrevalenceAnalysis", null.ok = TRUE)
+      private[['.spanPrevalence']] <- spanPrevalence
 
       # set incidence
       checkmate::assert_class(x = incidence, classes = "IncidenceAnalysis", null.ok = TRUE)
@@ -37,7 +41,8 @@ PimsAnalysis <- R6::R6Class(
 
   private = list(
     .analysisCohorts = NULL,
-    .prevalence = NULL,
+    .annualPrevalence = NULL,
+    .spanPrevalence = NULL,
     .incidence = NULL,
     .mortality = NULL,
     .strata = NULL
@@ -52,12 +57,20 @@ PimsAnalysis <- R6::R6Class(
       private$analysisCohorts <- value
     },
 
-    prevalence = function(value) {
+    annualPrevalence = function(value) {
       if (missing(value)) {
-        return(private$.prevalence)
+        return(private$.annualPrevalence)
       }
       checkmate::assert_class(value, "AnnualPrevalenceAnalysis", null.ok = TRUE)
-      private$.prevalence <- value
+      private$.annualPrevalence <- value
+    },
+
+    spanPrevalence = function(value) {
+      if (missing(value)) {
+        return(private$.spanPrevalence)
+      }
+      checkmate::assert_class(value, "SpanPrevalenceAnalysis", null.ok = TRUE)
+      private$.spanPrevalence <- value
     },
 
     incidence = function(value) {
@@ -104,14 +117,6 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
       # set period of interest
       checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
       private[['.periodOfInterest']] <- periodOfInterest
-
-      # # set lookback options
-      # checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
-      # private[['lookbackOptions']] <- lookbackOptions
-
-      # # set option of denominatorType
-      # checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      # private[['.denominatorType']] <- denominatorType
 
       # set population standardization
       checkmate::assert_class(x = populationStandardization, classes = "populationStandardization", null.ok = TRUE)
@@ -192,33 +197,16 @@ AnnualPrevalenceAnalysis <- R6::R6Class(
 SpanPrevalenceAnalysis <- R6::R6Class(
   classname = "SpanPrevalenceAnalysis",
   public = list(
-
     initialize = function(
-    analysisCohorts,
-    periodOfInterest,
-    lookbackOptions,
-    denominatorType,
-    n = NULL,
+    spanOfInterest,
     reportMultiplier,
     strata = NULL,
     populationStandardization = NULL
     ) {
 
-      # set analysis Cohort
-      checkmate::assert_list(x = analysisCohorts, types = "CohortInfo", null.ok = FALSE, min.len = 1)
-      private[['analysisCohorts']] <- analysisCohorts
-
       # set period of interest
-      checkmate::assert_class(x = periodOfInterest, classes = "PeriodOfInterest")
-      private[['periodOfInterest']] <- periodOfInterest
-
-      # set lookback options
-      checkmate::assert_class(x = lookbackOptions, classes = "LookBackOption")
-      private[['lookbackOptions']] <- lookbackOptions
-
-      # set option of denominatorType
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- denominatorType
+      checkmate::assert_class(x = spanOfInterest, classes = "SpanOfInterest")
+      private[['.spanOfInterest']] <- spanOfInterest
 
       # set strata
       checkmate::assert_class(x = strata, classes = "DemographicStrata", null.ok = TRUE)
@@ -231,40 +219,13 @@ SpanPrevalenceAnalysis <- R6::R6Class(
     }
   ),
   private = list(
-    analysisCohorts = NULL,
-    periodOfInterest = NULL,
-    lookbackOptions = NULL,
-    .denominatorType = NA_complex_,
-    .n = NULL,
+    .spanOfInterest = NULL,
     .reportMultiplier = NA_complex_,
     strata = NULL,
-    populationStandardization = NULL
+    populationStandardization = NULL,
+    .results = NULL
   ),
   active = list(
-
-    denominatorType = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.denominatorType
-        return(vv)
-      }
-
-      checkmate::assert_choice(x = denominatorType, choices = c("day1", "complete", "anyTime", "sufficientTime"))
-      private[['.denominatorType']] <- value
-
-    },
-
-    n = function(value) {
-      # return the value if nothing added
-      if(missing(value)) {
-        vv <- private$.n
-        return(vv)
-      }
-
-      checkmate::assert_numeric(x = value, null.ok = TRUE)
-      private[['.n']] <- value
-
-    },
 
     reportMultiplier = function(value) {
       # return the value if nothing added
@@ -276,7 +237,29 @@ SpanPrevalenceAnalysis <- R6::R6Class(
       checkmate::assert_numeric(x = value, null.ok = TRUE)
       private[['.reportMultiplier']] <- value
 
+    },
+
+    spanOfInterest = function(value){
+
+      if(missing(value)){
+        vv <- private$.spanOfInterest
+        return(vv)
+      }
+      checkmate::assert_class(x = value, classes = "SpanOfInterest")
+      private[['.spanOfInterest']] <- value
+    },
+
+    results = function(value) {
+      if (missing(value)) {
+        # Getter: return stored results
+        return(private$.results)
+      } else {
+        # Setter: validate and store results
+        checkmate::assert_data_frame(value)
+        private$.results <- value
+      }
     }
+
   )
 )
 
@@ -555,7 +538,7 @@ DemographicStrata <- R6::R6Class(
       )
     {
     # set option for strata
-      checkmate::assert_subset(x = strataOptions, choices = c("age", "gender", "race", "ethnicity", "location"))
+      checkmate::assert_subset(x = strataOptions, choices = c("age", "age_group", "gender", "race", "ethnicity", "location"))
       private[['.strataOptions']] <- strataOptions
     }
   ),
@@ -566,7 +549,8 @@ DemographicStrata <- R6::R6Class(
       age = "age",
       race = "race_concept_id",
       location = "location_id",
-      calendar_year = "calendar_year"
+      calendar_year = "calendar_year",
+      age_group = "age_group"
     )
   ),
 
@@ -631,6 +615,21 @@ PeriodOfInterest <- R6::R6Class(
     },
     duration = function() {
       self$endYear - self$startYear + 1
+    }
+  )
+)
+
+# Span of interest -----------------------
+SpanOfInterest <- R6::R6Class(
+  "SpanOfInterest",
+  public = list(
+    spanYears = data.frame(startYear = NULL,
+                        endYear = NULL),
+    initialize = function(spanYears) {
+      checkmate::checkIntegerish(spanYears$startYear)
+      checkmate::checkIntegerish(spanYears$endYear)
+      if (any(spanYears$startYear > spanYears$endYear)) stop("startYear must be <= endYear")
+      self$spanYears <- spanYears
     }
   )
 )

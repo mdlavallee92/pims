@@ -12,14 +12,16 @@
 #' @export
 createPimsAnalysis <- function(
     analysisCohorts,
-    prevalence = NULL,
+    annualPrevalence = NULL,
+    spanPrevalence = NULL,
     incidence = NULL,
     mortality = NULL,
     strata = NULL
 ) {
   PimsAnalysis$new(
     analysisCohorts = analysisCohorts,
-    prevalence = prevalence,
+    annualPrevalence = annualPrevalence,
+    spanPrevalence = spanPrevalence,
     incidence = incidence,
     mortality = mortality,
     strata = strata
@@ -113,3 +115,39 @@ createAnnualPrevalenceAnalysis <- function(
 createPeriodOfInterest <- function(startYear, endYear) {
   PeriodOfInterest$new(startYear = startYear, endYear = endYear)
 }
+
+#' Create a SpanOfInterest object
+#'
+#' @param data frame or tibble with columns 'startYear', 'endYear'
+#' @return A `SpanOfInterest` R6 object.
+#' @export
+createSpanOfInterest <- function(spanYears) {
+  SpanOfInterest$new(spanYears = spanYears)
+}
+
+#' Create an SpanPrevalenceAnalysis object
+#'
+#' Constructs an `SpanPrevalenceAnalysis` object with the specified settings.
+#'
+#' @param cohortOfInterest `CohortInfo` object of interest (required).
+#' @param periodOfInterest Numeric vector specifying the period of interest (required).
+#' @param lookbackOptions A `LookBackOption` object (required).
+#' @param incidenceType Character string: one of `"proportion"`, `"rate"`, or `"both"` (required).
+#' @param reportMultiplier Numeric value used for scaling the incidence report (optional).
+#' @param strata A `DemographicStrata` object (optional).
+#' @param populationStandardization A `PopulationStandardization` object (optional).
+#'
+#' @return An `SpanPrevalenceAnalysis` R6 object.
+#' @export
+createSpanPrevalenceAnalysis <- function(
+    spanOfInterest,
+    reportMultiplier = 100000,
+    populationStandardization = NULL
+) {
+  SpanPrevalenceAnalysis$new(
+    spanOfInterest = spanOfInterest,
+    reportMultiplier = reportMultiplier,
+    populationStandardization = populationStandardization
+  )
+}
+

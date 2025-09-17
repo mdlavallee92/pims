@@ -10,7 +10,8 @@ runPimsAnalysis(
   cohortDatabaseSchema,
   cohortTable,
   pimsAnalysis,
-  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema")
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
+  outputFolder = NULL
 )
 }
 \arguments{

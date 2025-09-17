@@ -85,7 +85,8 @@ pimsResult <- runPimsAnalysis(connectionDetails = connectionDetails,
                               cdmDatabaseSchema = "main",
                               cohortDatabaseSchema =  "main",
                               cohortTable = "cohort",
-                              pimsAnalysis = pimsAnalysis)
+                              pimsAnalysis = pimsAnalysis,
+                              outputFolder = "~/PimsOutput1")
 ```
 
 # Viewing results
@@ -102,3 +103,4 @@ pimsResult$prevalence
 pimsResult$incidence$results
 pimsResult$prevalence$results
 ```
+<!-- Optum age issue: -->

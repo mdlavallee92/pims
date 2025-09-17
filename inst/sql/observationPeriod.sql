@@ -54,6 +54,10 @@ WITH op2 AS (
         op.observation_period_end_date,
         c.gender_concept_id,
         (op.calendar_year - c.year_of_birth) AS age,
+        case when
+          op.calendar_year - c.year_of_birth >= 18 THEN '>=18'
+          else '< 18'
+        end as age_group,
         c.race_concept_id,
         c.ethnicity_concept_id,
         c.location_id
@@ -85,6 +89,7 @@ SELECT
     op2.observation_period_start_date,
     op2.observation_period_end_date,
     op2.age,
+    op2.age_group,
     op2.gender_concept_id,
     op2.race_concept_id,
     op2.ethnicity_concept_id,
